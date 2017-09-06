@@ -8,9 +8,9 @@ Usage
 =====
 The project contains three scripts
 
-  - data.py for downloading and forming the data set
-  - main.py for training the model
-  - api.py for serving the model as a web service.
+  - `data.py` for downloading and forming the data set
+  - `main.py` for training the model
+  - `api.py` for serving the model as a web service.
 
 Other than that I have also added the data.csv file, which can also be
 downloaded from DBPedia using the data.py script, but it was IMHO small enough
