@@ -6,6 +6,24 @@ from random import randint, shuffle
 
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")
 
+def getAllResourcesCountQuery ():
+    return """
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT count(DISTINCT *)
+        WHERE {
+            ?person a dbo:Person ;
+                      foaf:name ?name .
+        }
+    """
+
+def getNamesCount():
+    query = getAllResourcesCountQuery()
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    results = sparql.query().convert()
+    return results;
+
 def getAllResourcesPagingQuery (limit, offset):
     return """
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -53,8 +71,9 @@ def genRandomNewsgroupsText(n=1000):
         # Getting a random slice of text, of random size, from a random item of news
         random_item_index = randint(0, max_n - 1)
         random_item = newgroups_data[random_item_index]
-        # Arbitrary choice of text to be 10 to 100 characters long
-        random_text_length = randint(10,  50)
+        # Arbitrary choice of text to be 2 to 50 characters long
+        # These parameters can be optimized
+        random_text_length = randint(2,  50)
         idx = randint(0, len(random_item) - random_text_length)
         yield random_item[idx:idx+random_text_length]
 
@@ -69,10 +88,11 @@ def buildTrainingSet(n=10000):
         yield  [ x[0], 1 ]
         yield  [ y, 0 ]
 
-def getTrainingSet(n=10000):
+def getTrainingSet(n=10000, shuffle_data=True):
     # Consume generator in order to shuffle
     training_set = [ item for item in buildTrainingSet(n=n) ]
-    shuffle(training_set)
+    if shuffle_data:
+        shuffle(training_set)
     data, targets = zip(*training_set)
     return data, targets
 
