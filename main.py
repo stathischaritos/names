@@ -13,11 +13,11 @@ from time import time
 
 print "Loading the data..."
 N = 1000000
-data, targets =  getTrainingSet(n=N, shuffle_data=True)
+data, targets = getTrainingSet(n=N, shuffle_data=True)
 # Fit vectorizer and trasform text data to matrix.
 # Use character ngram vectorizer with n=4 to hopefully handle giberish, and
 # to have a more general model than what we could get with just using a dictionary.
-vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2,5))
+vectorizer = TfidfVectorizer(analyzer="word", ngram_range=(1,3))
 # Trasform data
 print "Transforming..."
 X = vectorizer.fit_transform(data)
@@ -51,9 +51,9 @@ def benchmark(clf, name):
 
 models = {
     "multi_nb": MultinomialNB(),
-    "ridge_classifier" : RidgeClassifier(),
-    "knn": KNeighborsClassifier(n_neighbors=10),
-    "random_forest": RandomForestClassifier(n_estimators=10)
+    # "ridge_classifier" : RidgeClassifier(),
+    # "knn": KNeighborsClassifier(n_neighbors=10),
+    # "random_forest": RandomForestClassifier(n_estimators=10)
 }
 results = []
 # Train all models and save in file

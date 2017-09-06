@@ -2,18 +2,49 @@ import sys
 import csv
 from SPARQLWrapper import SPARQLWrapper, JSON
 from sklearn.datasets import fetch_20newsgroups
-from random import randint, shuffle
+from random import randint, shuffle, sample
 
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+
+def getNamesSampleQuery(dec=100, offset=0, limit=10000):
+    """
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT DISTINCT ?name
+        WHERE {
+            ?person a dbo:Person ;
+                      foaf:name ?name .
+            FILTER ( 1 >  <SHORT_OR_LONG::bif:rnd> (%i, ?person, ?name))
+        }
+        LIMIT %i OFFSET %i
+    """ % (dec, offset, limit)
+
+def getNamesSample(dec=100, batch_size=10000):
+    iterator = 0
+    results_left = 1
+    while results_left:
+        print "Retrieved ", iterator, " names"
+        query = getNamesSampleQuery(dec=dec, offset=iterator, limit=batch_size)
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        results = results["results"]["bindings"]
+        results_left = len(results)
+        for result in results:
+            iterator += 1
+            if 'name' in result:
+                doc = result['name']['value'].encode('utf-8').strip()
+                yield [doc]
 
 def getAllResourcesCountQuery ():
     return """
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
-        SELECT count(DISTINCT *)
+        SELECT count(DISTINCT ?name)
         WHERE {
             ?person a dbo:Person ;
                       foaf:name ?name .
+
         }
     """
 
@@ -82,7 +113,7 @@ def buildTrainingSet(n=10000):
     I'm going to combine random newgroup text and dbpedia names to create a
     balanced label training and test set.
     """
-    names = genNames()
+    names = sample(list(genNames()), n)
     random_text = genRandomNewsgroupsText(n=n)
     for x, y in zip(names, random_text):
         yield  [ x[0], 1 ]

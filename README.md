@@ -1,7 +1,8 @@
 Intro
 -----
-This is a simple Naive Bayes classifier for recognizing names of People
-from random text.
+This is a simple classifier for recognizing names of People from random text.
+I try four different classification methods from Scikit and also provide an
+API to try out or use as a service.
 
 Usage
 =====
@@ -77,3 +78,12 @@ provided is the name of a person or not.
 
     http://127.0.0.1:5000/classify?q="Hello World"
     result {"not_name": 0.99903424718488021, "name": 0.00096575281511941332}
+
+
+Issues:
+-------
+
+  - Currently only the random forest classifier seems to be able to correctly
+  classify gibberish (ex. fdsafdsafdsafdsafdas). I tried character n-gram tf-idf
+  with a character range of 2-5 to fix this issue, maybe I need word n-grams
+  instead.

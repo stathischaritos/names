@@ -5,9 +5,9 @@ app = Flask(__name__)
 # Load models
 models = {
     "multi_nb": None,
-    "ridge_classifier": None,
-    "knn": None,
-    "random_forest": None
+    # "ridge_classifier": None,
+    # "knn": None,
+    # "random_forest": None
 }
 print "Loading models from file..."
 for model in models:
