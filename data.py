@@ -3,11 +3,43 @@ import csv
 from SPARQLWrapper import SPARQLWrapper, JSON
 from sklearn.datasets import fetch_20newsgroups
 from random import randint, shuffle, sample
+from itertools import izip
 
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")
 
+def getAllNonPersonQuery (dec=100, offset=0, limit=10000):
+    return """
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        SELECT DISTINCT ?label
+        WHERE {
+            ?s a ?o;
+               rdfs:label ?label
+            MINUS { ?s a dbo:Person }
+            FILTER ( 1 >  <SHORT_OR_LONG::bif:rnd> (%i, ?s, ?o))
+        }
+        OFFSET %i LIMIT %i
+    """ % (dec, offset, limit)
+
+def getAllNonPersons(dec=100, batch_size=10000):
+    iterator = 0
+    results_left = 1
+    while results_left:
+        print "Retrieved ", iterator, " labels"
+        query = getAllNonPersonQuery(dec=dec, offset=iterator, limit=batch_size)
+        sparql.setQuery(query)
+        sparql.setReturnFormat(JSON)
+        results = sparql.query().convert()
+        results = results["results"]["bindings"]
+        results_left = len(results)
+        for result in results:
+            iterator += 1
+            if 'label' in result:
+                doc = result['label']['value'].encode('utf-8').strip()
+                yield doc
+
 def getNamesSampleQuery(dec=100, offset=0, limit=10000):
-    """
+    return """
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX dbo: <http://dbpedia.org/ontology/>
         SELECT DISTINCT ?name
@@ -17,7 +49,7 @@ def getNamesSampleQuery(dec=100, offset=0, limit=10000):
             FILTER ( 1 >  <SHORT_OR_LONG::bif:rnd> (%i, ?person, ?name))
         }
         LIMIT %i OFFSET %i
-    """ % (dec, offset, limit)
+    """ % (dec, limit, offset)
 
 def getNamesSample(dec=100, batch_size=10000):
     iterator = 0
@@ -34,7 +66,7 @@ def getNamesSample(dec=100, batch_size=10000):
             iterator += 1
             if 'name' in result:
                 doc = result['name']['value'].encode('utf-8').strip()
-                yield [doc]
+                yield doc
 
 def getAllResourcesCountQuery ():
     return """
@@ -44,7 +76,6 @@ def getAllResourcesCountQuery ():
         WHERE {
             ?person a dbo:Person ;
                       foaf:name ?name .
-
         }
     """
 
@@ -124,6 +155,28 @@ def getTrainingSet(n=10000, shuffle_data=True):
     training_set = [ item for item in buildTrainingSet(n=n) ]
     if shuffle_data:
         shuffle(training_set)
+    data, targets = zip(*training_set)
+    return data, targets
+
+def buildNewBalancedSampleTrainingSet(n=10000):
+    dec = 100
+    if n > 10000:
+        dec = 10
+    if n > 100000:
+        dec = 1
+    names = getNamesSample(dec=dec);
+    not_names = getAllNonPersons(dec=dec);
+    data = izip(names, not_names);
+    i = 0
+    for x, y in data:
+        yield [x, 1]
+        yield [y, 0]
+        i += 2
+        if i >= n:
+            break
+
+def getNewBalancedTrainingSet(n=10000):
+    training_set = buildNewBalancedSampleTrainingSet(n=n)
     data, targets = zip(*training_set)
     return data, targets
 

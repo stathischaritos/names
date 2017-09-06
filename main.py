@@ -1,9 +1,8 @@
-from data import getTrainingSet
+from data import getNewBalancedTrainingSet
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import RidgeClassifier
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import BernoulliNB
+from sklearn.linear_model import Perceptron
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
@@ -12,16 +11,16 @@ from sklearn.externals import joblib
 from time import time
 
 print "Loading the data..."
-N = 1000000
-data, targets = getTrainingSet(n=N, shuffle_data=True)
+N = 100000
+data, targets = getNewBalancedTrainingSet(n=N)
 # Fit vectorizer and trasform text data to matrix.
-vectorizer = TfidfVectorizer(analyzer="word", ngram_range=(1,3))
+vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(1,3))
 # Trasform data
 print "Transforming..."
 X = vectorizer.fit_transform(data)
 y = np.asarray(targets)
 # Split into train and test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 print X_train.shape, X_test.shape, y_train.shape, y_test.shape
 # Benchmark classifiers
 def benchmark(clf, name):
@@ -48,10 +47,8 @@ def benchmark(clf, name):
     return clf_descr, score, train_time, test_time
 
 models = {
-    "multi_nb": MultinomialNB(),
-    # "ridge_classifier" : RidgeClassifier(),
-    # "knn": KNeighborsClassifier(n_neighbors=10),
-    # "random_forest": RandomForestClassifier(n_estimators=10)
+    "nb": BernoulliNB(),
+    "random_forest": RandomForestClassifier(n_estimators=10)
 }
 results = []
 # Train all models and save in file
