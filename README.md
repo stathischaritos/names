@@ -1,5 +1,5 @@
 Intro
------
+=====
 This is a simple classifier for recognizing names of People from random text.
 I try four different classification methods from Scikit and also provide an
 API to try out or use as a service.
@@ -81,7 +81,7 @@ provided is the name of a person or not.
 
 
 Issues:
--------
+=======
 
   - Currently only the random forest classifier seems to be able to correctly
   classify gibberish (ex. fdsafdsafdsafdsafdas). I tried character n-gram tf-idf
