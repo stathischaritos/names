@@ -21,25 +21,25 @@ Environment
 To run the project for the first time, using python 2.7, run the following
 commands:
 
-  pip install virtualenv
+    pip install virtualenv
 
-  cd project folder
+    cd project folder
 
-  virtualenv venv
+    virtualenv venv
 
-  source venv/bin/activate
+    source venv/bin/activate
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
-  mkdir model // For storing the models
+    mkdir model // For storing the models
 
 After that you can deactivate venv by calling
 
-  deactivate
+    deactivate
 
 and re-activate it whenever you want by just running
 
-  source venv/bin/activate
+    source venv/bin/activate
 
 
 Getting the data
@@ -48,13 +48,13 @@ I have uploaded the data.csv file that has the name data, and random text data
 comes from the newsgroups of sklearn. The name data was downloaded from DBPedia
 using the data.py script.
 
-  python data.py
+    python data.py
 
 Training the model
 ------------------
 To train the model run
 
-  python main.py
+    python main.py
 
 This trains the NB classifier and saves the model in pickle files. The
 confusion matrix and accuracy score is printed in the terminal.
@@ -64,7 +64,7 @@ Running the api
 I have also added a small flask api to try out the model with user inserted
 strings.You can start it using:
 
-  python api.py
+    python api.py
 
 Then you can test it at http://127.0.0.1:5000/classify using simple get
 requests from a browser or a tool like Postman. Give it a query in the url
