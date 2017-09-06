@@ -1,0 +1,5 @@
+sparqlwrapper
+sklearn
+Flask
+numpy
+scipy
