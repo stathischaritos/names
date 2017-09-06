@@ -54,7 +54,7 @@ def genRandomNewsgroupsText(n=1000):
         random_item_index = randint(0, max_n - 1)
         random_item = newgroups_data[random_item_index]
         # Arbitrary choice of text to be 10 to 100 characters long
-        random_text_length = randint(10, 100)
+        random_text_length = randint(10,  50)
         idx = randint(0, len(random_item) - random_text_length)
         yield random_item[idx:idx+random_text_length]
 

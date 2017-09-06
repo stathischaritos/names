@@ -13,10 +13,9 @@ N = 1000000
 data, targets =  getTrainingSet(n=N)
 # Fit vectorizer and trasform text data to matrix
 print "Transforming..."
-vectorizer = TfidfVectorizer()
-# Use character ngram vectorizer to hopefully handle giberish.
-# Careful: This makes for really slow processing and huge vectorizer and model.
-# vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(4,8))
+# Use character ngram vectorizer with n=4 to hopefully handle giberish, and
+# to have a more general model than what we could get with just using a dictionary.
+vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2,5))
 X = vectorizer.fit_transform(data)
 y = np.asarray(targets)
 # Split into train and test set
