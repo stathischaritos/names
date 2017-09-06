@@ -15,8 +15,6 @@ print "Loading the data..."
 N = 1000000
 data, targets = getTrainingSet(n=N, shuffle_data=True)
 # Fit vectorizer and trasform text data to matrix.
-# Use character ngram vectorizer with n=4 to hopefully handle giberish, and
-# to have a more general model than what we could get with just using a dictionary.
 vectorizer = TfidfVectorizer(analyzer="word", ngram_range=(1,3))
 # Trasform data
 print "Transforming..."

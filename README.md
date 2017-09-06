@@ -57,7 +57,8 @@ To train the model run
     python main.py
 
 This trains the NB classifier and saves the model in pickle files. The
-confusion matrix and accuracy score is printed in the terminal.
+confusion matrix and accuracy score is printed in the terminal. You can
+uncomment more models inside the code to add them to the process.
 
 Running the api
 ---------------
@@ -74,16 +75,17 @@ provided is the name of a person or not.
   ex.
 
     http://127.0.0.1:5000/classify?q="John Smith"
-    result: {"not_name": 0.044129798031260964, "name": 0.9558702019687384}
+    result: {"multi_nb": [0.020987041619013835, 0.9790129583809848]}
 
     http://127.0.0.1:5000/classify?q="Hello World"
-    result {"not_name": 0.99903424718488021, "name": 0.00096575281511941332}
+    {"multi_nb": [0.9917522714060827, 0.008247728593917876]}
 
 
 Issues:
 =======
 
   - Currently only the random forest classifier seems to be able to correctly
-  classify gibberish (ex. fdsafdsafdsafdsafdas). I tried character n-gram tf-idf
-  with a character range of 2-5 to fix this issue, maybe I need word n-grams
-  instead.
+  classify gibberish (ex. "fdsafdsafdsafdsafdas"). I tried character n-grams
+  and word n-grams. The character n-grams perform worse than random. Word
+  n-gram do not help. One solution could be to introduce completely random text
+  in the training set. Another could be to label non dictionary words as negative.

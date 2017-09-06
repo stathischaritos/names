@@ -13,6 +13,7 @@ print "Loading models from file..."
 for model in models:
     print "Loading ", model
     models[model] = joblib.load('model/' + model + '.pkl')
+print "Loading vectorizer..."
 vectorizer = joblib.load('model/vectorizer.pkl')
 # Attach app endpoint
 @app.route("/classify")
