@@ -5,7 +5,7 @@ app = Flask(__name__)
 # Load models
 models = {
     "nb": None,
-    "random_forest": None
+    # "random_forest": None
 }
 print "Loading models from file..."
 for model in models:

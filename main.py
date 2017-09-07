@@ -1,7 +1,7 @@
-from data import getNewBalancedTrainingSet
+from data import getTrainingSet, getNewBalancedTrainingSet
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import Perceptron
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -11,10 +11,11 @@ from sklearn.externals import joblib
 from time import time
 
 print "Loading the data..."
-N = 100000
+N = 1000000
+# data, targets = getTrainingSet(n=N, shuffle_data=True)
 data, targets = getNewBalancedTrainingSet(n=N)
 # Fit vectorizer and trasform text data to matrix.
-vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(1,3))
+vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(3,6))
 # Trasform data
 print "Transforming..."
 X = vectorizer.fit_transform(data)
@@ -47,8 +48,8 @@ def benchmark(clf, name):
     return clf_descr, score, train_time, test_time
 
 models = {
-    "nb": BernoulliNB(),
-    "random_forest": RandomForestClassifier(n_estimators=10)
+    "nb": MultinomialNB(),
+    # "random_forest": RandomForestClassifier(n_estimators=10)
 }
 results = []
 # Train all models and save in file
